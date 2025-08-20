@@ -3,10 +3,10 @@ const player1 = createPlayer("Player 1", "X");
 const player2 = createPlayer("Player 2", "O");
 let currentPlayer = player1;
 
-function createPlayer(name, symbol) {
+function createPlayer(playerName, playerSymbol) {
   return {
-    name: name,
-    symbol: symbol,
+    name: playerName,
+    symbol: playerSymbol,
   };
 }
 
@@ -49,7 +49,7 @@ function choice(position) {
   console.log(`${currentPlayer.name}'s turn`);
 }
 
-function winGame(symbol) {
+function winGame(playerSymbol) {
   const winCombo = [
     [0, 1, 2],
     [3, 4, 5],
@@ -60,16 +60,13 @@ function winGame(symbol) {
     [0, 4, 8],
     [2, 4, 6],
   ];
-  return winCombo.some(function (pattern) {
-    return pattern.every(function (index) {
-      return gameBoard[index] === symbol;
-    });
-  });
+
+  return winCombo.some((pattern) =>
+    pattern.every((index) => gameBoard[index] === playerSymbol)
+  );
 }
 
 printGameBoard();
 console.log(
   `${currentPlayer.name}, Pick a # on the game board with choice(1-9)!`
 );
-console.log(player1);
-console.log(player2);
