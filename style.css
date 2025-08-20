@@ -14,3 +14,27 @@ button {
   padding: 10px 20px;
   font-size: 1em;
 }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
+  margin: 20px auto;
+  width: max-content;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  background: hsl(0, 0%, 80%);
+  font-size: 2em;
+  cursor: pointer;
+}
+
+.cell.taken {
+  cursor: not-allowed;
+}

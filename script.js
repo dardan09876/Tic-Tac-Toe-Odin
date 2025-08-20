@@ -1,72 +1,74 @@
-let gameBoard = ["", "", "", "", "", "", "", "", ""];
 const player1 = createPlayer("Player 1", "X");
 const player2 = createPlayer("Player 2", "O");
 let currentPlayer = player1;
+let gameBoard = ["", "", "", "", "", "", "", "", ""];
+let gameOver = false;
 
-function createPlayer(playerName, playerSymbol) {
-  return {
-    name: playerName,
-    symbol: playerSymbol,
-  };
+const boardElement = document.getElementById("board");
+const messageElement = document.getElementById("message");
+const resetBtn = document.getElementById("resetBtn");
+const winCombo = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
+
+function createPlayer(name, symbol) {
+  return { name, symbol };
 }
 
 function printGameBoard() {
-  console.clear();
-  console.log(`
-   ${gameBoard[0] || "1"} | ${gameBoard[1] || "2"} | ${gameBoard[2] || "3"}
-  ---+---+---
-   ${gameBoard[3] || "4"} | ${gameBoard[4] || "5"} | ${gameBoard[5] || "6"}
-  ---+---+---
-   ${gameBoard[6] || "7"} | ${gameBoard[7] || "8"} | ${gameBoard[8] || "9"}
-  `);
+  boardElement.innerHTML = "";
+  gameBoard.forEach((cell, index) => {
+    const cellDiv = document.createElement("div");
+    cellDiv.classList.add("cell");
+    if (cell !== "") {
+      cellDiv.textContent = cell;
+      cellDiv.classList.add("taken");
+    }
+    cellDiv.addEventListener("click", () => choice(index));
+    boardElement.appendChild(cellDiv);
+  });
 }
 
-function choice(position) {
-  if (typeof position !== "number" || position < 1 || position > 9) {
-    console.log("Pick a # between 1-9");
-    return;
-  }
+function choice(index) {
+  if (gameOver || gameBoard[index] !== "") return;
 
-  if (gameBoard[position - 1] !== "") {
-    console.log("Spot taken, Try again!");
-    return;
-  }
+  gameBoard[index] = currentPlayer.symbol;
 
-  gameBoard[position - 1] = currentPlayer.symbol;
-
-  if (winGame(currentPlayer.symbol)) {
-    printGameBoard();
-    console.log(`${currentPlayer.name} (${currentPlayer.symbol}) wins!`);
-    return;
+  if (checkWin(currentPlayer.symbol)) {
+    messageElement.textContent = `${currentPlayer.name} (${currentPlayer.symbol}) wins!`;
+    gameOver = true;
   } else if (gameBoard.every((cell) => cell !== "")) {
-    printGameBoard();
-    console.log("It's a draw!");
-    return;
+    messageElement.textContent = "It's a draw!";
+    gameOver = true;
+  } else {
+    currentPlayer = currentPlayer === player1 ? player2 : player1;
+    messageElement.textContent = `${currentPlayer.name}'s turn (${currentPlayer.symbol})`;
   }
 
-  currentPlayer = currentPlayer === player1 ? player2 : player1;
   printGameBoard();
-  console.log(`${currentPlayer.name}'s turn`);
 }
 
-function winGame(playerSymbol) {
-  const winCombo = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
+function checkWin(symbol) {
   return winCombo.some((pattern) =>
-    pattern.every((index) => gameBoard[index] === playerSymbol)
+    pattern.every((index) => gameBoard[index] === symbol)
   );
 }
 
+function resetGame() {
+  gameBoard = ["", "", "", "", "", "", "", "", ""];
+  currentPlayer = player1;
+  gameOver = false;
+  messageElement.textContent = `${currentPlayer.name}'s turn (${currentPlayer.symbol})`;
+  printGameBoard();
+}
+
+resetBtn.addEventListener("click", resetGame);
+
 printGameBoard();
-console.log(
-  `${currentPlayer.name}, Pick a # on the game board with choice(1-9)!`
-);
