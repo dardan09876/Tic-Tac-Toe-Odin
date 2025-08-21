@@ -59,9 +59,22 @@ function makeMove(index) {
   gameBoard[index] = currentPlayer.symbol;
 
   if (checkWin(currentPlayer.symbol)) {
-    messageElement.textContent = `${currentPlayer.name} (${currentPlayer.symbol}) wins!`;
     gameOver = true;
-  } else if (gameBoard.every((cell) => cell !== "")) {
+    messageElement.textContent = `${currentPlayer.name} (${currentPlayer.symbol}) wins!`;
+
+    renderBoard();
+
+    const winningPattern = winCombo.find(pattern =>
+      pattern.every(i => gameBoard[i] === currentPlayer.symbol)
+    );
+
+    winningPattern.forEach(i => {
+      boardElement.children[i].style.backgroundColor = "#90ee90"; 
+    });
+    return;
+  }
+
+  if (gameBoard.every(cell => cell !== "")) {
     messageElement.textContent = "It's a draw!";
     gameOver = true;
   } else {
